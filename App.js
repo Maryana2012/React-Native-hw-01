@@ -11,7 +11,7 @@ export default function App() {
       <Image source={require('./images/Photo.png')}
         resizeMode="cover"
         imageStyle={styles.image} />
-      {/* <RegistrationScreen/> */}
+      <RegistrationScreen/>
       {/* <LoginScreen/> */}
       {/* <PostScreen/> */}
       <StatusBar style="auto" />
