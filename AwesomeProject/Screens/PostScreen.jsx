@@ -1,37 +1,51 @@
-import { Button, View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import { useFonts } from 'expo-font';
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+// import { useFonts } from 'expo-font';
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function PostScreen() {
-    const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
+    // const [fontsLoaded] = useFonts({
+    //     'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
         
-    })
-      if (!fontsLoaded) {return null;}
+    // })
+    //   if (!fontsLoaded) {return null;}
 
-    return (
+    return (<>
+        
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Публікації</Text>
             </View>
-                <Image source={require('../images/log-out.png')} style={ styles.imageExit} />
+
+            <TouchableOpacity>
+                <MaterialIcons name="logout" size={24} color="#000" style={ styles.imageExit}/>
+            </TouchableOpacity>
+              
             
             <View style={styles.mainContent}></View>
           
             <View style={styles.footer}>
+            {/* <MaterialIcons name="view_cozy" size={24} color="#000" />  */}
+              <TouchableOpacity>
                 <Image source={require('../images/grid.png')}/>
-                <TouchableOpacity style={styles.button}>
-                 <Image source={require('../images/plus.png')}/>
-                </TouchableOpacity>
-                
-                <Image source={require('../images/user.png')}/> 
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.button}>
+                <MaterialIcons name="add" size={24} color="#000" /> 
+              </TouchableOpacity>
+
+              <TouchableOpacity>
+                <MaterialIcons name="person" size={24} color="#000" /> 
+              </TouchableOpacity>
                
             </View>
              <View style={styles.divEnd}></View>
            
         </View>
+        </>
     )
 }
 const styles = StyleSheet.create({
+   
     container: {
         position: "absolute",
         bottom: 0,
@@ -68,11 +82,11 @@ const styles = StyleSheet.create({
     },
     imageExit: {
         position: "absolute",
-        top: 70,
-        left: 350,
-        width: 24,
-        height: 24,
-       
+        top: -50,
+        left: 150,
+        // width: 24,
+        // height: 24,
+        zIndex:10  
     },
 
     mainContent: {

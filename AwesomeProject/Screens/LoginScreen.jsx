@@ -1,16 +1,17 @@
 import { View, StyleSheet, TextInput, 
     Text, Button, Image, TouchableOpacity, KeyboardAvoidingView, 
     Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
-import { useFonts } from 'expo-font';
+// import { useFonts } from 'expo-font';
 import { useState } from "react";
 
 export default LoginScreen = () => {
         const [loginValue, setLoginValue]=useState('');
         const [passwordValue, setPasswordValue]=useState('');
         const [keyboardOpen, setKeyboardOpen] = useState(false);
-        const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf')})
-         if (!fontsLoaded) { return null;}
+        // const [fontsLoaded] = useFonts({
+        // 'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf')})
+
+        //  if (!fontsLoaded) { return null;}
 
     const handleLogin = () => {
         if(!loginValue || !passwordValue ){
@@ -33,8 +34,10 @@ export default LoginScreen = () => {
     Keyboard.addListener("keyboardDidShow", keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
-    return (
-     
+    return (<View style={styles.containerBG}>
+        <Image source={require('../images/Photo.png')}
+        resizeMode="cover"
+        imageStyle={styles.image} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
             <KeyboardAvoidingView  
              behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -68,10 +71,24 @@ export default LoginScreen = () => {
                   <View style={styles.divEnd}></View>
             </>)}
             </KeyboardAvoidingView>  
-            </TouchableWithoutFeedback>        
+            </TouchableWithoutFeedback>  
+            </View>      
     )
 }
 const styles = StyleSheet.create({
+    containerBG:{
+     position:'relative',
+     alignItems:'center',
+     width:"100%",
+     flex: 1,
+    },
+    image: {
+        flex: 1,
+        position: 'absolute',
+        justifyContent: 'center',
+        width: '100%',
+        height:'100%',
+        },
     container: {
         position: "absolute",
         bottom: 0,

@@ -37,7 +37,10 @@ export default RegistrationScreen = () => {
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
     return (
-
+        <View style={styles.containerBG}> 
+        <Image source={require('../images/Photo.png')}
+        resizeMode="cover"
+        imageStyle={styles.image} />
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
             <KeyboardAvoidingView  
              behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -70,9 +73,23 @@ export default RegistrationScreen = () => {
              </>)}             
             </KeyboardAvoidingView>  
             </TouchableWithoutFeedback> 
+            </View>
     )
 }
 const styles = StyleSheet.create({
+    containerBG:{
+        position:'relative',
+        alignItems:'center',
+        width:"100%",
+        flex: 1,
+       },
+       image: {
+           flex: 1,
+           position: 'absolute',
+           justifyContent: 'center',
+           width: '100%',
+           height:'100%',
+           },
     container: {
         position: "absolute",
         bottom: 0,
