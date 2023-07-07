@@ -1,12 +1,12 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function CommentsScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
               <TouchableOpacity >
-                 <MaterialIcons name="arrow-back" size={24} color="#000"/>
+                 <Ionicons name="arrow-back-outline" size={24} color="#000"/>
               </TouchableOpacity>
               <Text style={styles.title}>Коментарі</Text>
             </View>
@@ -18,7 +18,7 @@ export default function CommentsScreen() {
              <TextInput style={styles.input}
               placeholder="Коментувати..."/>  
             <TouchableOpacity style={styles.buttonArrowUp}>
-                <MaterialIcons name="arrow-upward" size={24} color="#000"/>
+                <Ionicons name="arrow-up-outline" size={24} color="#000"/>
             </TouchableOpacity>
          
 
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        height: 100,
+        height: 80,
         padding: 11,
         borderBottomColor: 'orange',
         borderBottomWidth: 1,

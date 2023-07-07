@@ -137,17 +137,17 @@ const styles = StyleSheet.create({
     },
     buttonPlus:{
         position:'absolute',
-        width:24,
-        height:24,
-        top:80,
-        left:105,
+        width:26,
+        height:25,
+        top:0,
+        left:240,
         backgroundColor:'orange',
-        borderRadius:50,
+        borderRadius: 50,
     },
     imagePlus: {
         position: 'absolute',  
-        top:-70,
-        left:45
+        top:-4,
+        left: -1,
     },
     title: {
         fontFamily: 'Roboto-Medium',

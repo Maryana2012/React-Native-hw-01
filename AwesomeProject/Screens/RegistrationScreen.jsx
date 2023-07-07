@@ -46,7 +46,7 @@ export default RegistrationScreen = () => {
             <View style={styles.box}></View>
             {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
             <TouchableOpacity style={styles.buttonPlus}>
-                <Ionicons name="add-circle-outline" size={24} color="#000" style={ styles.imagePlus}/>
+                <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
             </TouchableOpacity>
             <Text style={styles.title}>Реєстрація</Text>
             <TextInput style={styles.input}
@@ -123,15 +123,15 @@ const styles = StyleSheet.create({
     },
     imagePlus: {
         position: 'absolute',  
-        top:-70,
-        left:45
+        top:-4,
+        left:-1
     },
     buttonPlus:{
         position:'absolute',
-        width:24,
-        height:24,
-        top:80,
-        left:105,
+        width:26,
+        height:25,
+        top:0,
+        left:240,
         backgroundColor:'orange',
         borderRadius:50,
     },

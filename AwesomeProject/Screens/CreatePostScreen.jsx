@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons} from "@expo/vector-icons";
 
 export default function CreatePostScreen() {
   
@@ -24,7 +24,7 @@ export default function CreatePostScreen() {
             
                 <TextInput placeholder="Назва..." style={styles.input}/>
 
-                <MaterialIcons name="location-on" size={24} color="#000" style={styles.locationIcon}/>
+                <Ionicons name="location-outline" size={24} color="#000" style={styles.locationIcon}/>
                 <TextInput placeholder="Місцевість..." style={styles.inputLocation}/>
              
                 <TouchableOpacity style={styles.button} >
@@ -36,7 +36,7 @@ export default function CreatePostScreen() {
             <View style={styles.footer}>
                
                 <TouchableOpacity style={styles.buttonDelete}>
-                   <MaterialIcons name="delete" size={24} color="#000"/>
+                   <Ionicons name="trash-outline" size={24} color="#000"/>
                 </TouchableOpacity>
             </View>
 
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     },
     header: {
         width: '100%',
-        height: 100,
+        height: 80,
         padding: 11,
         borderBottomColor: 'orange',
         borderBottomWidth: 1,
