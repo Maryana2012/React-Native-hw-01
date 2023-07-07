@@ -1,20 +1,13 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
-// import { useFonts } from 'expo-font';
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-import { MaterialIcons } from "@expo/vector-icons";
-
-export default function PostScreen() {
-    // const [fontsLoaded] = useFonts({
-    //     'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-        
-    // })
-    //   if (!fontsLoaded) {return null;}
-
+export default function CreatePostScreen() {
+  
     return (
         <View style={styles.container}>
             <View style={styles.header}>
               <TouchableOpacity >
-                 <MaterialIcons name="arrow-back" size={24} color="#000"/>
+                 <Ionicons name="arrow-back-outline" size={24} color="#000"/>
               </TouchableOpacity>
               <Text style={styles.title}>Створити публікацію</Text>
             </View>
@@ -23,10 +16,9 @@ export default function PostScreen() {
                 <View style={styles.main_photo}></View>
                    <TouchableOpacity>
                      <View style={styles.photoButton}>
-                       <MaterialIcons name="linked-camera" size={30} color="#000" style={styles.photoIcon}/>
+                       <Ionicons name="camera-outline" size={30} color="#000" style={styles.photoIcon}/>
                      </View>
-                  </TouchableOpacity>                  
-                   
+                  </TouchableOpacity>                   
 
                 <Text style={styles.text}>Завантажте фото</Text>
             

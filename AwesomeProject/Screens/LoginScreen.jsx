@@ -1,52 +1,51 @@
-import { View, StyleSheet, TextInput, 
-    Text, Button, Image, TouchableOpacity, KeyboardAvoidingView, 
-    Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
-// import { useFonts } from 'expo-font';
+import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoidingView, 
+         Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default LoginScreen = () => {
-        const [loginValue, setLoginValue]=useState('');
-        const [passwordValue, setPasswordValue]=useState('');
-        const [keyboardOpen, setKeyboardOpen] = useState(false);
-        // const [fontsLoaded] = useFonts({
-        // 'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf')})
-
-        //  if (!fontsLoaded) { return null;}
+    const [loginValue, setLoginValue]=useState('');
+    const [passwordValue, setPasswordValue]=useState('');
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const navigation = useNavigation();
+    
 
     const handleLogin = () => {
         if(!loginValue || !passwordValue ){
-            console.log('All fields must be filled ');
+            console.log('Please, fill all fields');
             return
         }   
         console.log('Login: ', loginValue);
         console.log('Password: ', passwordValue);
         setLoginValue('');
         setPasswordValue('');
-    }
-    const keyboardDidShow = () => {
-     setKeyboardOpen(true);
-    };
 
-    const keyboardDidHide = () => {
-    setKeyboardOpen(false);
-    };
+        if (navigation) { navigation.navigate("Home")}
+    }
+
+    const keyboardDidShow = () => {setKeyboardOpen(true); };
+    const keyboardDidHide = () => {setKeyboardOpen(false);};
 
     Keyboard.addListener("keyboardDidShow", keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
     return (<View style={styles.containerBG}>
         <Image source={require('../images/Photo.png')}
-        resizeMode="cover"
-        imageStyle={styles.image} />
+               resizeMode="cover"
+               imageStyle={styles.image} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
             <KeyboardAvoidingView  
              behavior={Platform.OS == "ios" ? "padding" : "height"}
              keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
-             style={styles.container}
-             >   
+             style={styles.container}>   
              
            <View style={styles.box}></View>
-           <Image source={ require('../images/add.png')} style={styles.imagePlus} />
+           {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
+           <TouchableOpacity style={styles.buttonPlus}>
+                <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
+           </TouchableOpacity>
+
            
             <Text style={styles.title}>Увійти</Text>
          
@@ -62,12 +61,15 @@ export default LoginScreen = () => {
             
             {!keyboardOpen && (
                 <>
-                  <TouchableOpacity style={styles.button} 
-                                    onPress={handleLogin}>
+                  <TouchableOpacity style={styles.button} onPress={handleLogin}>
                        <Text style={styles.buttonText}>Увійти</Text>
                   </TouchableOpacity>
-
-                  <Text style={styles.text}>Немає акаунта? Зареєстуватися </Text>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.text}>Немає акаунта? </Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Registration") }}>
+                       <Text style={styles.text}>Зареєструватися</Text>  
+                    </TouchableOpacity>
+                  </View>
                   <View style={styles.divEnd}></View>
             </>)}
             </KeyboardAvoidingView>  
@@ -77,10 +79,10 @@ export default LoginScreen = () => {
 }
 const styles = StyleSheet.create({
     containerBG:{
-     position:'relative',
-     alignItems:'center',
-     width:"100%",
-     flex: 1,
+       position:'relative',
+       alignItems:'center',
+       width:"100%",
+       flex: 1,
     },
     image: {
         flex: 1,
@@ -133,13 +135,22 @@ const styles = StyleSheet.create({
         borderRadius: 16,
 
     },
+    buttonPlus:{
+        position:'absolute',
+        width:24,
+        height:24,
+        top:80,
+        left:105,
+        backgroundColor:'orange',
+        borderRadius:50,
+    },
     imagePlus: {
         position: 'absolute',  
-        right: 125,
+        top:-70,
+        left:45
     },
     title: {
         fontFamily: 'Roboto-Medium',
-        // fontWeight: 500,
         fontSize: 30,
         color: '#212121',
         textAlign: 'center',
@@ -172,8 +183,11 @@ const styles = StyleSheet.create({
     },
     text: {
         fontFamily: 'Roboto-Medium',
-        // fontWeight: 400,
         fontSize: 16,
+    },
+    textContainer: {
+        display: "flex",
+        flexDirection: "row",
         marginBottom: 132,
     },
     divEnd: {
@@ -181,8 +195,5 @@ const styles = StyleSheet.create({
         height: 5,
         backgroundColor: '#212121',
         marginBottom:8,
-    }
-    
-   
-  
+    } 
 })

@@ -1,20 +1,19 @@
 
 import { View, StyleSheet, TextInput, Text, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native"
-import { useFonts } from 'expo-font';
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default RegistrationScreen = () => {
         const [login, setLogin]=useState('');
         const [email, setEmail]=useState('');
         const [parol, setParol] = useState('');
         const [keyboardOpen, setKeyboardOpen] = useState(false);
-        const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf')});
-            if (!fontsLoaded) { return null; }
-
+        const navigation = useNavigation();
+ 
         const handleRegistration = () =>{
             if(!login || !email || !parol ){
-                console.log('All fields must be filled ');
+                console.log('Please, fill all fields ');
                 return
             }   
             console.log('Login:', login )
@@ -23,15 +22,12 @@ export default RegistrationScreen = () => {
             setLogin('');
             setEmail('');
             setParol('');
+
+            if(navigation){navigation.navigate("Home")}
         }
 
-    const keyboardDidShow = () => {
-       setKeyboardOpen(true);
-    };
-   
-    const keyboardDidHide = () => {
-       setKeyboardOpen(false);
-    };
+    const keyboardDidShow = () => { setKeyboardOpen(true);};
+    const keyboardDidHide = () => {setKeyboardOpen(false);};
    
     Keyboard.addListener("keyboardDidShow", keyboardDidShow);
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
@@ -48,7 +44,10 @@ export default RegistrationScreen = () => {
              style={styles.container}
              >   
             <View style={styles.box}></View>
-            <Image source={ require('../images/add.png')} style={styles.imagePlus} />
+            {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
+            <TouchableOpacity style={styles.buttonPlus}>
+                <Ionicons name="add-circle-outline" size={24} color="#000" style={ styles.imagePlus}/>
+            </TouchableOpacity>
             <Text style={styles.title}>Реєстрація</Text>
             <TextInput style={styles.input}
                        placeholder="Логін"
@@ -68,7 +67,12 @@ export default RegistrationScreen = () => {
                               onPress={handleRegistration}>
                           <Text style={styles.buttonText}>Зареєструватися</Text>
                     </TouchableOpacity>
-                    <Text style={styles.text}>Вже є акаунт? Увійти </Text>
+                    <View style={styles.textContainer}>
+                    <Text style={styles.text}>Вже є акаунт? </Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Login") }}>
+                           <Text style={styles.text}>Увійти</Text>  
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.divEnd}></View>
              </>)}             
             </KeyboardAvoidingView>  
@@ -82,14 +86,14 @@ const styles = StyleSheet.create({
         alignItems:'center',
         width:"100%",
         flex: 1,
-       },
-       image: {
-           flex: 1,
-           position: 'absolute',
-           justifyContent: 'center',
-           width: '100%',
-           height:'100%',
-           },
+    },
+    image: {
+        flex: 1,
+        position: 'absolute',
+        justifyContent: 'center',
+        width: '100%',
+        height:'100%',
+    },
     container: {
         position: "absolute",
         bottom: 0,
@@ -119,7 +123,17 @@ const styles = StyleSheet.create({
     },
     imagePlus: {
         position: 'absolute',  
-        right: 125,
+        top:-70,
+        left:45
+    },
+    buttonPlus:{
+        position:'absolute',
+        width:24,
+        height:24,
+        top:80,
+        left:105,
+        backgroundColor:'orange',
+        borderRadius:50,
     },
     title: {
         fontFamily: 'Roboto-Medium',
@@ -149,6 +163,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         marginBottom: 16,
         marginTop: 27,
+
         
     },
     buttonText: {
@@ -160,7 +175,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Medium',
         // fontWeight: 400,
         fontSize: 16,
+        // marginBottom: 66,
+    },
+     textContainer: {
+        display: "flex",
+        flexDirection: "row",
         marginBottom: 66,
+
     },
     divEnd: {
         width: 134,
