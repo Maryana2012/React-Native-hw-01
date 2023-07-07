@@ -1,35 +1,114 @@
-import { View, StyleSheet, TextInput, Text, Button, Image, TouchableOpacity } from "react-native"
-import { useFonts } from 'expo-font';
+import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoidingView, 
+         Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default LoginScreen = () => {
-        const [fontsLoaded] = useFonts({
-        'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-        
-    })
-     if (!fontsLoaded) {
-    return null;
-  }
-    return (
-        <View style={styles.container} >
-            <View style={styles.box}></View>
-            <Image source={ require('../images/add.png')} style={styles.imagePlus} />
+    const [loginValue, setLoginValue]=useState('');
+    const [passwordValue, setPasswordValue]=useState('');
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const navigation = useNavigation();
+    
+
+    const handleLogin = () => {
+        if(!loginValue || !passwordValue ){
+            console.log('Please, fill all fields');
+            return
+        }   
+        console.log('Login: ', loginValue);
+        console.log('Password: ', passwordValue);
+        setLoginValue('');
+        setPasswordValue('');
+
+        if (navigation) { navigation.navigate("Home")}
+    }
+
+    const keyboardDidShow = () => {setKeyboardOpen(true); };
+    const keyboardDidHide = () => {setKeyboardOpen(false);};
+
+    Keyboard.addListener("keyboardDidShow", keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+
+    return (<View style={styles.containerBG}>
+        <Image source={require('../images/Photo.png')}
+               resizeMode="cover"
+               imageStyle={styles.image} />
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
+            <KeyboardAvoidingView  
+             behavior={Platform.OS == "ios" ? "padding" : "height"}
+             keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
+             style={styles.container}>   
+             
+           <View style={styles.box}></View>
+           {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
+           <TouchableOpacity style={styles.buttonPlus}>
+                <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
+           </TouchableOpacity>
+
+           
             <Text style={styles.title}>Увійти</Text>
          
-            <TextInput style={styles.input} placeholder="Адреса електронної пошти"/>
-            <TextInput style={styles.input} placeholder="Пароль" />  
+            <TextInput style={styles.input} 
+                       placeholder="Адреса електронної пошти"
+                       value={loginValue}
+                       onChangeText={text=>setLoginValue(text)}
+                       />
+            <TextInput style={styles.input} 
+                      placeholder="Пароль"
+                      value={passwordValue}
+                      onChangeText={text=>setPasswordValue(text)} />  
             
-            <TouchableOpacity style={styles.button} >
-                <Text style={styles.buttonText}>Увійти</Text>
-            </TouchableOpacity>
-            <Text style={styles.text}>Немає акаунта? Зареєстуватися </Text>
-            <View style={styles.divEnd}></View>
-        </View>
-        
+            {!keyboardOpen && (
+                <>
+                  <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                       <Text style={styles.buttonText}>Увійти</Text>
+                  </TouchableOpacity>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.text}>Немає акаунта? </Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Registration") }}>
+                       <Text style={styles.text}>Зареєструватися</Text>  
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.divEnd}></View>
+            </>)}
+            </KeyboardAvoidingView>  
+            </TouchableWithoutFeedback>  
+            </View>      
     )
-
-    }
+}
 const styles = StyleSheet.create({
+    containerBG:{
+       position:'relative',
+       alignItems:'center',
+       width:"100%",
+       flex: 1,
+    },
+    image: {
+        flex: 1,
+        position: 'absolute',
+        justifyContent: 'center',
+        width: '100%',
+        height:'100%',
+        },
     container: {
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: "100%",
+        // height: 549,
+        alignItems: "center",
+        justifyContent: "space-around",
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingTop: 92,
+        borderRadius: 25,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        // backgroundColor: "#FFFFFF",
+        backgroundColor:'blue'
+    },
+    containerKeyboard:{
         position: "absolute",
         bottom: 0,
         right: 0,
@@ -56,13 +135,22 @@ const styles = StyleSheet.create({
         borderRadius: 16,
 
     },
+    buttonPlus:{
+        position:'absolute',
+        width:26,
+        height:25,
+        top:0,
+        left:240,
+        backgroundColor:'orange',
+        borderRadius: 50,
+    },
     imagePlus: {
         position: 'absolute',  
-        right: 125,
+        top:-4,
+        left: -1,
     },
     title: {
         fontFamily: 'Roboto-Medium',
-        // fontWeight: 500,
         fontSize: 30,
         color: '#212121',
         textAlign: 'center',
@@ -95,8 +183,11 @@ const styles = StyleSheet.create({
     },
     text: {
         fontFamily: 'Roboto-Medium',
-        // fontWeight: 400,
         fontSize: 16,
+    },
+    textContainer: {
+        display: "flex",
+        flexDirection: "row",
         marginBottom: 132,
     },
     divEnd: {
@@ -104,8 +195,5 @@ const styles = StyleSheet.create({
         height: 5,
         backgroundColor: '#212121',
         marginBottom:8,
-    }
-    
-   
-  
+    } 
 })

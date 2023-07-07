@@ -1,36 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image} from 'react-native';
+import 'react-native-gesture-handler';
+import Home from './Screens/Home';
 import LoginScreen from './Screens/LoginScreen';
-import PostScreen from './Screens/PostScreen';
 import RegistrationScreen from './Screens/RegistrationScreen';
+import PostScreen from './Screens/PostScreen';
+import ProfileScreen from './Screens/ProfileScreen';
+import CreatePostScreen from './Screens/CreatePostScreen';
+import CommentsScreen from './Screens/CommentsScreen'
+import { useFonts } from 'expo-font';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from "@react-navigation/stack";
 
 export default function App() {
-  
-  return (
-    <View style={styles.container}>
-      <Image source={require('./images/Photo.png')}
-        resizeMode="cover"
-        imageStyle={styles.image} />
-      <RegistrationScreen/>
-      {/* <LoginScreen/> */}
-      {/* <PostScreen/> */}
-      <StatusBar style="auto" />
-    </View>
+  const MainStack = createStackNavigator();
+  const [fontsLoaded] = useFonts({'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf')})
+
+     if (!fontsLoaded) { return null;}
+
+  return (<>
+   <NavigationContainer>
+    <MainStack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name='Registration' component={RegistrationScreen}/>
+      <MainStack.Screen name='Login' component={LoginScreen}/>
+      <MainStack.Screen name='Home'component={Home}/>
+      <MainStack.Screen name='Post' component={PostScreen}/>
+      <MainStack.Screen name='CreatePost' component={CreatePostScreen}/>
+      <MainStack.Screen name='Comments' component={CommentsScreen}/>
+      <MainStack.Screen name='Profile' component={ProfileScreen}/> 
+    </MainStack.Navigator>
+  </NavigationContainer>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    alignItems: 'center',
-  },
-  image: {
-    flex: 1,
-    position: 'absolute',
-    //  zIndex: -1,
-    justifyContent: 'center',
-    width: '100%',
-    height:'100%',
-    },
-});
