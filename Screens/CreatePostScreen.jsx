@@ -19,7 +19,6 @@ export default function CreatePostScreen() {
     useEffect(() => {
         (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
-            console.log("yes");
             await MediaLibrary.requestPermissionsAsync();
             setHasPermission(status === "granted");
         })();
@@ -46,16 +45,28 @@ export default function CreatePostScreen() {
     if (hasPermission === false) { return <Text>No access to camera</Text> }
 
     const data = photo && photoName && locationName;
+
+    const handleMakePhoto = async ()=>{
+       if (cameraRef) {
+         const { uri } = await cameraRef.takePictureAsync();
+        await MediaLibrary.createAssetAsync(uri);
+        setPhoto(uri)
+        } 
+    }
     
     const handleCreatePublish = () => {
         if (data) {
-            setPhotoName("");
-            setLocationName("");
             navigation.navigate("Post",
-               {location: location,
+            {location: location,
                 photo: photo,
                 photoName: photoName,
                 locationName: locationName});
+            setPhotoName("");
+            setLocationName("");
+            setPhoto("");
+            // console.log("photo: ", photo);
+            // console.log("PhotoName: ", photoName);
+            // console.log("LocationName: ", locationName);
         } else {
             console.log("Please, fill all fields");
             return;
@@ -66,8 +77,11 @@ export default function CreatePostScreen() {
         setLocationName(null);
         setPhoto(null);
         setPhotoName(null);
+        // console.log("PhotoName: ", photoName);
+        // console.log("LocationName: ", locationName);
     }
     
+    console.log("photo: ", photo);
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -83,18 +97,10 @@ export default function CreatePostScreen() {
                 <Camera style={styles.main_photo}
                  type={type}
                  ref={setCameraRef}>
-                    {photo && <Image source={{ uri: photo }} style={styles.imageDone}/>}
-                    <TouchableOpacity style={styles.photoButton}
-                         onPress={async () => {
-                          if (cameraRef) {
-                          const { uri } = await cameraRef.takePictureAsync();
-                          await MediaLibrary.createAssetAsync(uri);
-                                 setPhoto(uri)
-                             }
-                        }}>
-                       <Ionicons name="camera-outline" size={24} color="#000" style={styles.photoIcon}/>
-                    </TouchableOpacity>  
-   
+                    {photo && <Image source={{ uri: photo }} style={styles.imageDone} />}
+                    <TouchableOpacity style={styles.photoButton} onPress={handleMakePhoto}>
+                        <Ionicons name="camera-outline" size={24} color="#000" style={styles.photoIcon}/>
+                    </TouchableOpacity>   
                 </Camera>
                             
                 <Text style={styles.text}>

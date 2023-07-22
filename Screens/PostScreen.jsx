@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 export default function PostScreen() {
     const navigation = useNavigation();
     const { params } = useRoute();
-    console.log(params);
     const [location, setLocation] = useState(null);
     const [locationName, setLocationName] = useState(null);
     const [photo, setPhoto] = useState(null);
     const [photoName, setPhotoName] = useState(null);
+
     useEffect(() => {
         if (params) {
             const { location, locationName, photo, photoName } = params;
@@ -22,11 +22,6 @@ export default function PostScreen() {
             setPhotoName(photoName);
         } else {return}
     }, [params])
-    console.log(params);
-    console.log(location);
-    console.log(photo);
-    console.log(photoName);
-    console.log(locationName);
 
     return (        
         <View style={styles.container}>
@@ -60,12 +55,9 @@ export default function PostScreen() {
                                <Text style={styles.text}>{locationName}</Text>  
                            </TouchableOpacity>
                         </View>
-
                     </View>  
-                    
                 </View>
-}
- 
+                }
             </View> 
          
         </View>
