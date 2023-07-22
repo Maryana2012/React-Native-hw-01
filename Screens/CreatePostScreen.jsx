@@ -1,41 +1,131 @@
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image} from "react-native";
 import { Ionicons} from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { Camera } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
+import * as Location from "expo-location";
+import * as MediaLibrary from "expo-media-library";
 
 export default function CreatePostScreen() {
-  
+    const [hasPermission, setHasPermission] = useState(null);
+    const [cameraRef, setCameraRef] = useState(null);
+    const [type, setType] = useState(Camera.Constants.Type.back);
+    const [photo, setPhoto] = useState(null);
+    const [photoName, setPhotoName] = useState(null);
+    const [locationName, setLocationName] = useState(null);
+    const [location, setLocation] = useState(null);
+    const navigation = useNavigation();
+    
+    useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            console.log("yes");
+            await MediaLibrary.requestPermissionsAsync();
+            setHasPermission(status === "granted");
+        })();
+    }, []);
+
+    
+    useEffect(() => {
+        (async () => {
+         const { status } = await Location.requestForegroundPermissionsAsync();
+         if (status !== "granted") {
+            console.log("Permission to access location was denied");
+         }
+      
+         const location = await Location.getCurrentPositionAsync({});
+         const coords = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+         };
+         setLocation(coords);
+        })();
+    }, []);
+    
+    if (hasPermission === null) {return <View /> }
+    if (hasPermission === false) { return <Text>No access to camera</Text> }
+
+    const data = photo && photoName && locationName;
+    
+    const handleCreatePublish = () => {
+        if (data) {
+            setPhotoName("");
+            setLocationName("");
+            navigation.navigate("Post",
+               {location: location,
+                photo: photo,
+                photoName: photoName,
+                locationName: locationName});
+        } else {
+            console.log("Please, fill all fields");
+            return;
+        }
+    }
+
+    const handleClearFields = () => {
+        setLocationName(null);
+        setPhoto(null);
+        setPhotoName(null);
+    }
+    
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-              <TouchableOpacity >
+              <TouchableOpacity onPress={() => { navigation.navigate("Post") }} >
                  <Ionicons name="arrow-back-outline" size={24} color="#000"/>
               </TouchableOpacity>
               <Text style={styles.title}>Створити публікацію</Text>
             </View>
             
-            <View style={styles.mainContent}>
-                <View style={styles.main_photo}></View>
-                   <TouchableOpacity>
-                     <View style={styles.photoButton}>
-                       <Ionicons name="camera-outline" size={30} color="#000" style={styles.photoIcon}/>
-                     </View>
-                  </TouchableOpacity>                   
 
-                <Text style={styles.text}>Завантажте фото</Text>
+            <View style={styles.mainContent}>
+
+                <Camera style={styles.main_photo}
+                 type={type}
+                 ref={setCameraRef}>
+                    {photo && <Image source={{ uri: photo }} style={styles.imageDone}/>}
+                    <TouchableOpacity style={styles.photoButton}
+                         onPress={async () => {
+                          if (cameraRef) {
+                          const { uri } = await cameraRef.takePictureAsync();
+                          await MediaLibrary.createAssetAsync(uri);
+                                 setPhoto(uri)
+                             }
+                        }}>
+                       <Ionicons name="camera-outline" size={24} color="#000" style={styles.photoIcon}/>
+                    </TouchableOpacity>  
+   
+                </Camera>
+                            
+                <Text style={styles.text}>
+                    {photo ? "Редагувати фото" : "Завантажте фото"}
+                </Text>
             
-                <TextInput placeholder="Назва..." style={styles.input}/>
+                
+                <TextInput placeholder="Назва..."
+                    style={styles.input}
+                    value={photoName}
+                    onChangeText={(text)=>setPhotoName(text)}
+                />
 
                 <Ionicons name="location-outline" size={24} color="#000" style={styles.locationIcon}/>
-                <TextInput placeholder="Місцевість..." style={styles.inputLocation}/>
+                <TextInput placeholder="Місцевість..."
+                    style={styles.inputLocation}
+                    value={locationName}
+                    onChangeText={(text) => setLocationName(text)} />
              
-                <TouchableOpacity style={styles.button} >
-                       <Text style={styles.buttonText}>Опублікувати</Text>
+                <TouchableOpacity
+                    // style={styles.button}
+                      style={[styles.button, !data && styles.buttonDisabled]}
+                    onPress={handleCreatePublish}>
+                    <Text style={styles.buttonText}>Опублікувати</Text>
                 </TouchableOpacity>
             </View>     
 
 
             <View style={styles.footer}>
                
-                <TouchableOpacity style={styles.buttonDelete}>
+                <TouchableOpacity style={styles.buttonDelete} onPress={handleClearFields}>
                    <Ionicons name="trash-outline" size={24} color="#000"/>
                 </TouchableOpacity>
             </View>
@@ -44,7 +134,8 @@ export default function CreatePostScreen() {
            
         </View>
     )
-}
+    }
+    
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
@@ -92,20 +183,26 @@ const styles = StyleSheet.create({
     },
     photoButton:{
         position:'absolute',
-        width: 50,
-        height:50,
+        width: 40,
+        height:40,
         backgroundColor:'red',
         borderRadius: 50,
-        top: -150,
-        left: 170,
+        top: 100,
+        left: 150,
+        zIndex:12
     },
     photoIcon:{
       position:"absolute",
       top: 7,
-      left:9,
+      left:8,
       zIndex:10
     },
-
+    imageDone: {
+        position:"absolute",
+        width: "100%",
+        height: "100%",
+        // zIndex:15
+    },
     text:{
       fontSize:16,
       fontWeight:400,
@@ -156,6 +253,10 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         marginLeft:25,
     },
+    buttonDisabled: {
+       backgroundColor: "#ccc",
+       opacity: 0.5,
+  },
     buttonText: {
         textAlign: 'center',
         fontFamily: 'Roboto-Medium',

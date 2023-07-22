@@ -31,7 +31,7 @@ export default LoginScreen = () => {
     Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
     return (<View style={styles.containerBG}>
-        <Image source={require('../images/Photo.png')}
+              <Image source={require('../images/Photo.png')}
                resizeMode="cover"
                imageStyle={styles.image} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
@@ -41,7 +41,6 @@ export default LoginScreen = () => {
              style={styles.container}>   
              
            <View style={styles.box}></View>
-           {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
            <TouchableOpacity style={styles.buttonPlus}>
                 <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
            </TouchableOpacity>
