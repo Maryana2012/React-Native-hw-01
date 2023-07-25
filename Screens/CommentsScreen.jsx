@@ -1,11 +1,13 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CommentsScreen() {
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-              <TouchableOpacity >
+              <TouchableOpacity onPress={() => { navigation.navigate("Post") }}>
                  <Ionicons name="arrow-back-outline" size={24} color="#000"/>
               </TouchableOpacity>
               <Text style={styles.title}>Коментарі</Text>

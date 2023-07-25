@@ -1,36 +1,46 @@
 
 import { View, StyleSheet, TextInput, Text, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native"
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default RegistrationScreen = () => {
-        const [login, setLogin]=useState('');
-        const [email, setEmail]=useState('');
-        const [parol, setParol] = useState('');
-        const [keyboardOpen, setKeyboardOpen] = useState(false);
-        const navigation = useNavigation();
- 
-        const handleRegistration = () =>{
-            if(!login || !email || !parol ){
-                console.log('Please, fill all fields ');
-                return
-            }   
-            console.log('Login:', login )
-            console.log('Email:', email )
-            console.log('Parol:', parol )
-            setLogin('');
-            setEmail('');
-            setParol('');
+    const [login, setLogin]=useState('');
+    const [email, setEmail]=useState('');
+    const [parol, setParol] = useState('');
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const navigation = useNavigation();
+    
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => { setKeyboardOpen(false); });
 
-            if(navigation){navigation.navigate("Home")}
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
         }
+    }, []);
+ 
+    const handleRegistration = () =>{
+        if(!login || !email || !parol ){
+            console.log('Please, fill all fields ');
+            return
+            }   
+        console.log('Login:', login )
+        console.log('Email:', email )
+        console.log('Parol:', parol )
+        setLogin('');
+        setEmail('');
+        setParol('');
 
-    const keyboardDidShow = () => { setKeyboardOpen(true);};
-    const keyboardDidHide = () => {setKeyboardOpen(false);};
+        if(navigation){navigation.navigate("Home")}
+    }
+
+    // const keyboardDidShow = () => { setKeyboardOpen(true);};
+    // const keyboardDidHide = () => {setKeyboardOpen(false);};
    
-    Keyboard.addListener("keyboardDidShow", keyboardDidShow);
-    Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+    // Keyboard.addListener("keyboardDidShow", keyboardDidShow);
+    // Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
     return (
         <View style={styles.containerBG}> 

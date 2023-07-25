@@ -1,6 +1,6 @@
 import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoidingView, 
          Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -9,6 +9,16 @@ export default LoginScreen = () => {
     const [passwordValue, setPasswordValue]=useState('');
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const navigation = useNavigation();
+
+ useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => { setKeyboardOpen(false); });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+    }, []);   
     
 
     const handleLogin = () => {
@@ -24,11 +34,11 @@ export default LoginScreen = () => {
         if (navigation) { navigation.navigate("Home")}
     }
 
-    const keyboardDidShow = () => {setKeyboardOpen(true); };
-    const keyboardDidHide = () => {setKeyboardOpen(false);};
+    // const keyboardDidShow = () => {setKeyboardOpen(true); };
+    // const keyboardDidHide = () => {setKeyboardOpen(false);};
 
-    Keyboard.addListener("keyboardDidShow", keyboardDidShow);
-    Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+    // Keyboard.addListener("keyboardDidShow", keyboardDidShow);
+    // Keyboard.addListener("keyboardDidHide", keyboardDidHide);
 
     return (<View style={styles.containerBG}>
               <Image source={require('../images/Photo.png')}

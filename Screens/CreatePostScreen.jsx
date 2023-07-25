@@ -8,7 +8,7 @@ import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
 
 export default function CreatePostScreen() {
-     const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
     const [hasPermission, setHasPermission] = useState(null);
     const [cameraRef, setCameraRef] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
@@ -16,17 +16,10 @@ export default function CreatePostScreen() {
     const [photoName, setPhotoName] = useState(null);
     const [locationName, setLocationName] = useState(null);
     const [location, setLocation] = useState(null);
-    const navigation = useNavigation();
-    
-    useEffect(() => {
-        (async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            await MediaLibrary.requestPermissionsAsync();
-            setHasPermission(status === "granted");
-        })();
-    }, []);
 
-    
+    const navigation = useNavigation();
+    const data = photo && photoName && locationName;
+  
     useEffect(() => {
         (async () => {
          const { status } = await Location.requestForegroundPermissionsAsync();
@@ -43,15 +36,29 @@ export default function CreatePostScreen() {
         })();
     }, []);
 
+    useEffect(() => {
+         (async () => {
+           const { status } = await Camera.requestCameraPermissionsAsync();
+           await MediaLibrary.requestPermissionsAsync();
+           setHasPermission(status === 'granted');
+         })();
+    }, []);
     
+
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => { setKeyboardOpen(false); });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+    }, []);
+
+      
     if (hasPermission === null) {return <View /> }
     if (hasPermission === false) { return <Text>No access to camera</Text> }
-    const keyboardDidShow = () => {setKeyboardOpen(true); };
-    const keyboardDidHide = () => { setKeyboardOpen(false); };
-    Keyboard.addListener("keyboardDidShow", keyboardDidShow);
-    Keyboard.addListener("keyboardDidHide", keyboardDidHide);
-
-    const data = photo && photoName && locationName;
 
     const handleMakePhoto = async ()=>{
         if (cameraRef) {
@@ -93,6 +100,7 @@ export default function CreatePostScreen() {
              behavior={Platform.OS == "ios" ? "padding" : "height"}
              keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 0}
              style={styles.container}>  
+                    
             <View style={styles.header}>
               <TouchableOpacity onPress={() => { navigation.navigate("Post") }} >
                  <Ionicons name="arrow-back-outline" size={24} color="#000"/>
@@ -107,7 +115,6 @@ export default function CreatePostScreen() {
                     <View style={styles.photoView}>
                         {photo && (
                             <View style={styles.photoContainer}>
-                                
                                 <Image source={{ uri: photo }} style={{ width: "100%", height: "100%" }} />
                             </View>)}
                       <TouchableOpacity style={styles.photoButton} onPress={handleMakePhoto}>
