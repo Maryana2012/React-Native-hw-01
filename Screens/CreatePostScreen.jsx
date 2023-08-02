@@ -37,11 +37,21 @@ export default function CreatePostScreen() {
     }, []);
 
     useEffect(() => {
-         (async () => {
-           const { status } = await Camera.requestCameraPermissionsAsync();
-           await MediaLibrary.requestPermissionsAsync();
-           setHasPermission(status === 'granted');
-         })();
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            await MediaLibrary.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+             
+            // return () => {
+            //     navigator.mediaDevices.getUserMedia({ video: true })
+            //         .then((stream) => {
+            //             const tracks = stream.getTracks();
+            //             tracks.forEach((track) => { track.stop(); });
+            //         })
+            //         .catch((error) => { console.log('Помилка при вимкненні камери:', error); })
+            // }
+        }
+        )();
     }, []);
     
 
@@ -56,7 +66,37 @@ export default function CreatePostScreen() {
         }
     }, []);
 
-      
+//    
+
+//     const enableCamera = async () => {
+//       try {
+//         mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+//         const videoElement = document.getElementById('video');
+//         videoElement.srcObject = mediaStream;
+//         videoElement.play();
+//       } catch (error) {
+//         console.error('Error accessing camera:', error);
+//       }
+//     };
+
+//     const disableCamera = () => {
+//       if (mediaStream) {
+//         const videoTracks = mediaStream.getVideoTracks();
+//         videoTracks.forEach(track => track.stop());
+//         mediaStream = null;
+//       }
+//     };
+
+//     enableCamera();
+
+//     return () => {
+//       disableCamera();
+//     };
+//   }, []);
+
+
+     
+    
     if (hasPermission === null) {return <View /> }
     if (hasPermission === false) { return <Text>No access to camera</Text> }
 
@@ -110,8 +150,7 @@ export default function CreatePostScreen() {
             
 
             <View style={styles.mainContent}>
-
-                <Camera type={type} ref={setCameraRef} style={styles.cameraContainer}>
+                <Camera type={type} ref={setCameraRef} captureAudio={false} style={styles.cameraContainer}>
                     <View style={styles.photoView}>
                         {photo && (
                             <View style={styles.photoContainer}>

@@ -1,8 +1,10 @@
 import { View, StyleSheet, Text, TouchableOpacity,Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useAuth } from "../hooks/use-auth";
+import {removeUser} from "../redux/auth/slice"
 
 
 export default function PostScreen() {
@@ -12,6 +14,9 @@ export default function PostScreen() {
     const [locationName, setLocationName] = useState(null);
     const [photo, setPhoto] = useState(null);
     const [photoName, setPhotoName] = useState(null);
+    const dispatch = useDispatch();
+    const { isAuth, email } = useAuth();
+
 
     useEffect(() => {
         if (params) {
@@ -21,7 +26,15 @@ export default function PostScreen() {
             setPhoto(photo);
             setPhotoName(photoName);
         } else {return}
-    }, [params])
+    }, [params]);
+
+    const handleLogout = () => {
+        dispatch(removeUser());
+        navigation.navigate("Login")
+    }
+  
+    
+    
 
     return (        
         <View style={styles.container}>
@@ -49,8 +62,10 @@ export default function PostScreen() {
                         <TouchableOpacity onPress={() => { navigation.navigate("Comments") }}>                         
                            <Ionicons name="chatbubble-outline" size={24} />
                          </TouchableOpacity>
-                        <View style={styles.containerLocation}>
-                           <Ionicons name="location-outline" size={24} />
+                            <View style={styles.containerLocation}>
+                            <TouchableOpacity onPress={handleLogout}>
+                                <Ionicons name="location-outline" size={24} />
+                            </TouchableOpacity>    
                            <TouchableOpacity onPress={() => { navigation.navigate("Map", {location:location}) }}>
                                <Text style={styles.text}>{locationName}</Text>  
                            </TouchableOpacity>

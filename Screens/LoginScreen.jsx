@@ -3,12 +3,18 @@ import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoid
 import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { signInWithEmailAndPassword} from "firebase/auth";
+import { setUser } from '../redux/auth/slice';
+import  {auth}  from '../config';
 
 export default LoginScreen = () => {
-    const [loginValue, setLoginValue]=useState('');
+    const [emailValue, setEmailValue]=useState('');
     const [passwordValue, setPasswordValue]=useState('');
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    
 
  useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
@@ -21,17 +27,29 @@ export default LoginScreen = () => {
     }, []);   
     
 
-    const handleLogin = () => {
-        if(!loginValue || !passwordValue ){
-            console.log('Please, fill all fields');
-            return
+    const handleLogin = (emailValue, passwordValue) => {
+          if(!emailValue || !passwordValue ){
+              console.log('Please, fill all fields');
+              return
         }   
-        console.log('Login: ', loginValue);
+        signInWithEmailAndPassword(auth, emailValue, passwordValue)
+            .then(({user})=> {
+                console.log(user);
+                dispatch(setUser({
+                   email: user.email,
+                   token: user.stsTokenManager.accessToken,
+                   id: user.uid
+                }))
+            })
+            .catch(console.error)
+        
+        console.log('Email: ', emailValue);
         console.log('Password: ', passwordValue);
-        setLoginValue('');
+
+        setEmailValue('');
         setPasswordValue('');
 
-        if (navigation) { navigation.navigate("Home")}
+        if (navigation) {navigation.navigate("Home")}
     }
 
     // const keyboardDidShow = () => {setKeyboardOpen(true); };
@@ -60,8 +78,8 @@ export default LoginScreen = () => {
          
             <TextInput style={styles.input} 
                        placeholder="Адреса електронної пошти"
-                       value={loginValue}
-                       onChangeText={text=>setLoginValue(text)}
+                       value={emailValue}
+                       onChangeText={text=>setEmailValue(text)}
                        />
             <TextInput style={styles.input} 
                       placeholder="Пароль"
@@ -70,7 +88,7 @@ export default LoginScreen = () => {
             
             {!keyboardOpen && (
                 <>
-                  <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                  <TouchableOpacity style={styles.button} onPress={()=>handleLogin(emailValue, passwordValue)}>
                        <Text style={styles.buttonText}>Увійти</Text>
                   </TouchableOpacity>
                   <View style={styles.textContainer}>

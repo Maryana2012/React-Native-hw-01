@@ -1,15 +1,20 @@
-
 import { View, StyleSheet, TextInput, Text, Image, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native"
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { createUserWithEmailAndPassword } from "firebase/auth"; 
+// import { setUser } from '../redux/auth/slice';
+import { setUser } from '../redux/auth/slice';
+import  {auth}  from '../config';
 
 export default RegistrationScreen = () => {
     const [login, setLogin]=useState('');
     const [email, setEmail]=useState('');
-    const [parol, setParol] = useState('');
+    const [password, setPassword] = useState('');
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
@@ -20,27 +25,32 @@ export default RegistrationScreen = () => {
             keyboardDidHideListener.remove();
         }
     }, []);
- 
-    const handleRegistration = () =>{
-        if(!login || !email || !parol ){
-            console.log('Please, fill all fields ');
+
+    const handleRegistration = () => {
+      if(!login || !email || !password ){
+            console.log('Please, fill all fields');
             return
-            }   
-        console.log('Login:', login )
-        console.log('Email:', email )
-        console.log('Parol:', parol )
+        }
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(({ user }) => {
+                console.log(user);
+                dispatch(setUser({
+                    // login: user.login,
+                    email: user.email,
+                    // token: user.stsTokenManager,
+                    id: user.uid
+                }))
+            })
+            .catch(console.error)
+        
         setLogin('');
         setEmail('');
-        setParol('');
+        setPassword('');
 
         if(navigation){navigation.navigate("Home")}
     }
 
-    // const keyboardDidShow = () => { setKeyboardOpen(true);};
-    // const keyboardDidHide = () => {setKeyboardOpen(false);};
-   
-    // Keyboard.addListener("keyboardDidShow", keyboardDidShow);
-    // Keyboard.addListener("keyboardDidHide", keyboardDidHide);
+    
 
     return (
         <View style={styles.containerBG}> 
@@ -69,8 +79,8 @@ export default RegistrationScreen = () => {
                        onChangeText={text => setEmail(text)}/>
             <TextInput style={styles.input} 
                        placeholder="Пароль"
-                       value={parol}
-                       onChangeText={text => setParol(text)}/> 
+                       value={password}
+                       onChangeText={text => setPassword(text)}/> 
 
             {!keyboardOpen && (<>
                     <TouchableOpacity style={styles.button}
