@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register } from "./operations";
+import { setUser,removeUser } from "./operations";
 
 
 const initialState= {
@@ -10,47 +10,46 @@ const initialState= {
     id: null
 }
 
-const handlePending = (state, action) => {
-    //   console.log("pendding")  
-}
+// const handlePending = (state, action) => {
+//       console.log("pendding")  
+// }
 
-const handleFulfilled = (state, action) => {
-    // console.log("fulfilled")
-}
+// const handleFulfilled = (state, action) => {
+//     console.log("fulfilled")
+// }
 
-const handleRejected = (state, action) => {
-    // console.log("error")
-}
+// const handleRejected = (state, action) => {
+//     console.log("error")
+// }
 
 export const authSlice = createSlice({
     name: "user",
     initialState: initialState,
-    reducers: {
-        setUser(state, action) {
+    extraReducers: {
+        [setUser.fulfilled](state, action) {
             state.email = action.payload.email;
-            // state.password = action.payload.password;
             state.token = action.payload.token;
             state.id = action.payload.id
             },
-        removeUser(state) {
-            state.email = null;
-            // state.password = null;
-            state.token = null;
-            state.id = null
-        }
+        // [removeUser.fulfilled](state) {
+        //     state.email = null;
+        //     // state.password = null;
+        //     state.token = null;
+        //     state.id = null
+        // }
     }
-    // extraReducers: (builder) => {
-    //     builder
-    //     .addCase(register.pending, handlePending)
-    //     .addCase(register.fulfilled, handleFulfilled)
-    //     .addCase(register.rejected, handleRejected)
-    //     .addCase(login.pending, handlePending)
-    //     .addCase(login.fulfilled, handleFulfilled)
-    //     .addCase(login.rejected, handleRejected)
+//     extraReducers: (builder) => {
+//         builder
+//         .addCase(setUser.pending, handlePending)
+//         .addCase(setUser.fulfilled, handleFulfilled)
+//         .addCase(setUser.rejected, handleRejected)
+//         .addCase(removeUser.pending, handlePending)
+//         .addCase(removeUser.fulfilled, handleFulfilled)
+//         .addCase(removeUser.rejected, handleRejected)
 // }
     
 
 });
 
-export const {setUser, removeUser } = authSlice;
+// export const {setUser, removeUser } = authSlice;
 export const authReducer = authSlice.reducer;

@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { createUserWithEmailAndPassword } from "firebase/auth"; 
 // import { setUser } from '../redux/auth/slice';
-import { setUser } from '../redux/auth/slice';
+import { setUser } from '../redux/auth/operations';
 import  {auth}  from '../config';
 
 export default RegistrationScreen = () => {
@@ -31,17 +31,7 @@ export default RegistrationScreen = () => {
             console.log('Please, fill all fields');
             return
         }
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(({ user }) => {
-                console.log(user);
-                dispatch(setUser({
-                    // login: user.login,
-                    email: user.email,
-                    // token: user.stsTokenManager,
-                    id: user.uid
-                }))
-            })
-            .catch(console.error)
+        dispatch(setUser({ email, password }));            
         
         setLogin('');
         setEmail('');
