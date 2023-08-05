@@ -3,10 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { createUserWithEmailAndPassword } from "firebase/auth"; 
-// import { setUser } from '../redux/auth/slice';
-import { setUser } from '../redux/auth/operations';
-import  {auth}  from '../config';
+import { register } from '../redux/auth/operations';
 
 export default RegistrationScreen = () => {
     const [login, setLogin]=useState('');
@@ -31,7 +28,7 @@ export default RegistrationScreen = () => {
             console.log('Please, fill all fields');
             return
         }
-        dispatch(setUser({ email, password }));            
+        dispatch(register({email, password }));            
         
         setLogin('');
         setEmail('');
@@ -39,8 +36,6 @@ export default RegistrationScreen = () => {
 
         if(navigation){navigation.navigate("Home")}
     }
-
-    
 
     return (
         <View style={styles.containerBG}> 
@@ -54,7 +49,6 @@ export default RegistrationScreen = () => {
              style={styles.container}
              >   
             <View style={styles.box}></View>
-            {/* <Image source={ require('../images/add.png')} style={styles.imagePlus} /> */}
             <TouchableOpacity style={styles.buttonPlus}>
                 <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
             </TouchableOpacity>

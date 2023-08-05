@@ -2,20 +2,21 @@ import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoid
          Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { signInWithEmailAndPassword} from "firebase/auth";
-import { setUser } from '../redux/auth/slice';
-import  {auth}  from '../config';
+import { loginUser } from '../redux/auth/operations';
+import { fetchSignInMethodsForEmail } from "firebase/auth";
+import { auth } from "../config";
+import Notiflix from "notiflix";
 
 export default LoginScreen = () => {
-    const [emailValue, setEmailValue]=useState('');
-    const [passwordValue, setPasswordValue]=useState('');
+    const [email, setEmail]=useState('');
+    const [password, setPassword]=useState('');
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     
-
  useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => { setKeyboardOpen(false); });
@@ -27,39 +28,30 @@ export default LoginScreen = () => {
     }, []);   
     
 
-    const handleLogin = (emailValue, passwordValue) => {
-          if(!emailValue || !passwordValue ){
+    const handleLogin = async () => {
+          if(!email || !password ){
               console.log('Please, fill all fields');
               return
         }   
-        signInWithEmailAndPassword(auth, emailValue, passwordValue)
-            .then(({user})=> {
-                console.log(user);
-                dispatch(setUser({
-                   email: user.email,
-                   token: user.stsTokenManager.accessToken,
-                   id: user.uid
-                }))
-            })
-            .catch(console.error)
+        const isAuth = await fetchSignInMethodsForEmail(auth, email);
+        console.log(isAuth);
+        if (isAuth.length === 0) {
+            alert("Такого користувача не існує, Вам необхідно зареєструватись");
+            setEmail('');
+            setPassword('');
+            navigation.navigate("Registration")
+            return
+        }
+        dispatch(loginUser({email, password}))
+
+        setEmail('');
+        setPassword('');
         
-        console.log('Email: ', emailValue);
-        console.log('Password: ', passwordValue);
-
-        setEmailValue('');
-        setPasswordValue('');
-
         if (navigation) {navigation.navigate("Home")}
     }
 
-    // const keyboardDidShow = () => {setKeyboardOpen(true); };
-    // const keyboardDidHide = () => {setKeyboardOpen(false);};
-
-    // Keyboard.addListener("keyboardDidShow", keyboardDidShow);
-    // Keyboard.addListener("keyboardDidHide", keyboardDidHide);
-
-    return (<View style={styles.containerBG}>
-              <Image source={require('../images/Photo.png')}
+return (<View style={styles.containerBG}>
+         <Image source={require('../images/Photo.png')}
                resizeMode="cover"
                imageStyle={styles.image} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
@@ -78,17 +70,17 @@ export default LoginScreen = () => {
          
             <TextInput style={styles.input} 
                        placeholder="Адреса електронної пошти"
-                       value={emailValue}
-                       onChangeText={text=>setEmailValue(text)}
+                       value={email}
+                       onChangeText={text=>setEmail(text)}
                        />
             <TextInput style={styles.input} 
                       placeholder="Пароль"
-                      value={passwordValue}
-                      onChangeText={text=>setPasswordValue(text)} />  
+                      value={password}
+                      onChangeText={text=>setPassword(text)} />  
             
             {!keyboardOpen && (
                 <>
-                  <TouchableOpacity style={styles.button} onPress={()=>handleLogin(emailValue, passwordValue)}>
+                  <TouchableOpacity style={styles.button} onPress={handleLogin}>
                        <Text style={styles.buttonText}>Увійти</Text>
                   </TouchableOpacity>
                   <View style={styles.textContainer}>

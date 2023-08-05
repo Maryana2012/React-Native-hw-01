@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useAuth } from "../hooks/use-auth";
-import {removeUser} from "../redux/auth/slice"
+import {remove} from "../redux/auth/operations"
 
 
 export default function PostScreen() {
@@ -15,8 +15,6 @@ export default function PostScreen() {
     const [photo, setPhoto] = useState(null);
     const [photoName, setPhotoName] = useState(null);
     const dispatch = useDispatch();
-    const { isAuth, email } = useAuth();
-
 
     useEffect(() => {
         if (params) {
@@ -29,19 +27,16 @@ export default function PostScreen() {
     }, [params]);
 
     const handleLogout = () => {
-        dispatch(removeUser());
+        dispatch(remove());
         navigation.navigate("Login")
     }
   
-    
-    
-
-    return (        
+return (        
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Публікації</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
                 <Ionicons name="log-out-outline" size={24} color="#000" style={ styles.imageExit}/>
             </TouchableOpacity>
             
@@ -63,7 +58,7 @@ export default function PostScreen() {
                            <Ionicons name="chatbubble-outline" size={24} />
                          </TouchableOpacity>
                             <View style={styles.containerLocation}>
-                            <TouchableOpacity onPress={handleLogout}>
+                            <TouchableOpacity>
                                 <Ionicons name="location-outline" size={24} />
                             </TouchableOpacity>    
                            <TouchableOpacity onPress={() => { navigation.navigate("Map", {location:location}) }}>
