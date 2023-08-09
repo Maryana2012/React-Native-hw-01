@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { register } from '../redux/auth/operations';
+import { register} from '../redux/auth/operations';
+import * as ImagePicker from 'expo-image-picker';
 
 export default RegistrationScreen = () => {
     const [login, setLogin]=useState('');
     const [email, setEmail]=useState('');
     const [password, setPassword] = useState('');
     const [keyboardOpen, setKeyboardOpen] = useState(false);
+    const [photo, setPhoto] = useState(null);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     
@@ -23,35 +25,54 @@ export default RegistrationScreen = () => {
         }
     }, []);
 
-    const handleRegistration = () => {
+    const handleImagePicker = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.canceled) {
+        const { assets } = result;
+        if (assets && assets.length > 0) {
+        const selectedPhotoUri = assets[0].uri;
+        setPhoto(selectedPhotoUri);
+      }
+    }
+  };
+
+    const handleRegistration = async () => {
       if(!login || !email || !password ){
             console.log('Please, fill all fields');
             return
         }
-        dispatch(register({email, password }));            
-        
+        dispatch(register({ email, password, login, photo})); 
+              
         setLogin('');
         setEmail('');
         setPassword('');
+        setPhoto('')
 
         if(navigation){navigation.navigate("Home")}
     }
 
     return (
         <View style={styles.containerBG}> 
-        <Image source={require('../images/Photo.png')}
-        resizeMode="cover"
-        imageStyle={styles.image} />
+        <Image source={require('../images/Photo.png')} resizeMode="cover" imageStyle={styles.image} />
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
             <KeyboardAvoidingView  
              behavior={Platform.OS == "ios" ? "padding" : "height"}
              keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
-             style={styles.container}
-             >   
-            <View style={styles.box}></View>
-            <TouchableOpacity style={styles.buttonPlus}>
-                <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
-            </TouchableOpacity>
+             style={styles.container}>
+                    
+            <View style={styles.box}>
+                        {photo ?
+                            (<Image source={{ uri: photo }} style={styles.userImg}/>) :
+                            (<TouchableOpacity style={styles.buttonPlus} onPress={handleImagePicker}>
+                                <Ionicons name="add-circle-outline" size={30} color="orange" style={styles.imagePlus} />
+                            </TouchableOpacity>)}
+                        
+            </View>
             <Text style={styles.title}>Реєстрація</Text>
             <TextInput style={styles.input}
                        placeholder="Логін"
@@ -134,11 +155,16 @@ const styles = StyleSheet.create({
         position:'absolute',
         width:26,
         height:25,
-        top:0,
-        left:240,
+        top:60,
+        left:100,
         backgroundColor:'orange',
         borderRadius:50,
     },
+    userImg: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
+   },
     title: {
         fontFamily: 'Roboto-Medium',
         // fontWeight: 500,

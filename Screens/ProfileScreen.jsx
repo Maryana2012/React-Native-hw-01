@@ -1,8 +1,21 @@
 import { View, StyleSheet,Text,Image, TouchableOpacity, Dimensions } from "react-native"
-import { Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 export default ProfileScreen = () => {
     const screenHeight = Dimensions.get("window").height;
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+    // const [photoProfile, setPhotoProfile] = useState(null)
+    const login = useSelector((state) => state.user.login);
+    const photo = useSelector((state) => state.user.photo);
+
+    const handleLogout = () => {
+        dispatch(remove());
+        navigation.navigate("Login")
+    }
 
     return (
         <View style={styles.containerBG}>
@@ -12,17 +25,17 @@ export default ProfileScreen = () => {
              
             <View style={styles.container}>
               <View style={[styles.innerContainer, { height: (screenHeight * 2) / 3 }]}>
-                <View style={styles.box}>
-                   <TouchableOpacity style={styles.buttonClose}>
+              
+                    <Image source={{ uri: photo }} style={styles.box} />
+                    <TouchableOpacity style={styles.buttonClose}>
                       <Ionicons name='close-outline' size={22} color="#000" style={styles.iconClose}/>
-                   </TouchableOpacity>
+                    </TouchableOpacity>
 
-                   <TouchableOpacity>
+                    <TouchableOpacity onPress={handleLogout}>
                       <Ionicons name="log-out-outline" size={24} color="#000" style={ styles.iconExit}/>
-                   </TouchableOpacity> 
-                </View>
-
-              <Text style={styles.title}>Name</Text>
+                    </TouchableOpacity> 
+                
+                    <Text style={styles.title}>{ login }</Text>
               <View style={styles.mainContent}></View>
           
             </View>
@@ -69,7 +82,7 @@ const styles = StyleSheet.create({
         top: '-30%',
         width: 120,
         height: 120,
-        backgroundColor: '#F6F6F6',
+        // backgroundColor: '#F6F6F6',
         borderRadius: 16,
     },
     iconClose: {
@@ -83,16 +96,16 @@ const styles = StyleSheet.create({
         position:'absolute',
         width:24,
         height:24,
-        top:80,
-        left:105,
+        top:-90,
+        left:230,
         backgroundColor:'orange',
         borderRadius:50,
     },
 
     iconExit:{
         position:'absolute',
-        top:80,
-        left: 210,
+        top:-90,
+        left:140,
     },
     title: {
         fontFamily: 'Roboto-Medium',

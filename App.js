@@ -25,7 +25,7 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
-         <MainStack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+         <MainStack.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false }}>
            <MainStack.Screen name='Registration' component={RegistrationScreen}/>
            <MainStack.Screen name='Login' component={LoginScreen}/>
            <MainStack.Screen name='Home'component={Home}/>

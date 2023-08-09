@@ -2,13 +2,12 @@ import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoid
          Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { loginUser } from '../redux/auth/operations';
+import { loginUser, updateUser } from '../redux/auth/operations';
 import { fetchSignInMethodsForEmail } from "firebase/auth";
 import { auth } from "../config";
-import Notiflix from "notiflix";
+
 
 export default LoginScreen = () => {
     const [email, setEmail]=useState('');
@@ -34,7 +33,6 @@ export default LoginScreen = () => {
               return
         }   
         const isAuth = await fetchSignInMethodsForEmail(auth, email);
-        console.log(isAuth);
         if (isAuth.length === 0) {
             alert("Такого користувача не існує, Вам необхідно зареєструватись");
             setEmail('');
@@ -42,8 +40,8 @@ export default LoginScreen = () => {
             navigation.navigate("Registration")
             return
         }
-        dispatch(loginUser({email, password}))
-
+        dispatch(loginUser({email, password}));
+       
         setEmail('');
         setPassword('');
         
@@ -60,10 +58,10 @@ return (<View style={styles.containerBG}>
              keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
              style={styles.container}>   
              
-           <View style={styles.box}></View>
+           {/* <View style={styles.box}></View>
            <TouchableOpacity style={styles.buttonPlus}>
                 <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
-           </TouchableOpacity>
+           </TouchableOpacity> */}
 
            
             <Text style={styles.title}>Увійти</Text>
@@ -117,10 +115,10 @@ const styles = StyleSheet.create({
         width: "100%",
         // height: 549,
         alignItems: "center",
-        justifyContent: "space-around",
+        // justifyContent: "space-around",
         paddingLeft: 16,
         paddingRight: 16,
-        paddingTop: 92,
+        paddingTop: 40,
         borderRadius: 25,
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,

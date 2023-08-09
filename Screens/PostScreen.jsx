@@ -2,9 +2,10 @@ import { View, StyleSheet, Text, TouchableOpacity,Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useAuth } from "../hooks/use-auth";
-import {remove} from "../redux/auth/operations"
+import { useDispatch, useSelector } from "react-redux";
+import { remove } from "../redux/auth/operations";
+
+import { auth } from "../config";
 
 
 export default function PostScreen() {
@@ -12,10 +13,15 @@ export default function PostScreen() {
     const { params } = useRoute();
     const [location, setLocation] = useState(null);
     const [locationName, setLocationName] = useState(null);
-    const [photo, setPhoto] = useState(null);
+    // const [photo, setPhoto] = useState(null);
     const [photoName, setPhotoName] = useState(null);
     const dispatch = useDispatch();
+    const email = useSelector((state) => state.user.email);
+    const login = useSelector((state) => state.user.login);
+    const photo = useSelector((state) => state.user.photo)
+    console.log(photo)
 
+     
     useEffect(() => {
         if (params) {
             const { location, locationName, photo, photoName } = params;
@@ -30,6 +36,7 @@ export default function PostScreen() {
         dispatch(remove());
         navigation.navigate("Login")
     }
+
   
 return (        
         <View style={styles.container}>
@@ -42,10 +49,10 @@ return (
             
             <View style={styles.mainContent}>
                 <View style={styles.containerProfile} >
-                    <Image source={require('../images/Photo.png')} style={styles.imageProfile} />
+                    <Image source={{ uri: photo }} style={styles.imageProfile} />
                     <View style={styles.containerProfileText}>
-                      <Text style={styles.text}> Логін</Text>
-                      <Text style={styles.text}> Пошта</Text>
+                    <Text style={styles.text}> {login} </Text>
+                    <Text style={styles.text}> {email} </Text>
                     </View>
                 </View>
 

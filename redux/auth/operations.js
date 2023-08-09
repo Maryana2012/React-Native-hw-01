@@ -3,23 +3,31 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
-  signOut,
+    signOut,
+currentUser
 } from "firebase/auth";
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { auth } from "../../config";
-// import {useAuth} from "../../hooks/use-auth"
+
 
 export const register = createAsyncThunk(
     "auth/setUser",
-    async ({email, password}) => {
+    async ({email, password, login, photo}) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const { user } = userCredential;
+            const upload = {
+                displayName: login,
+                photoURL: photo}
+            await updateProfile(user,upload);
             const userNew = {
                   email: user.email,
                   id: user.uid,
-                  token: user.stsTokenManager.accessToken
+                  token: user.stsTokenManager.accessToken, 
+                  displayName: user.displayName,
+                  photoURL: user.photoURL
             }
+            console.log(userNew)
             return userNew;
         } catch (error) {
             console.log(error.message)
@@ -27,16 +35,21 @@ export const register = createAsyncThunk(
     }
 );
 
+
+
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
     async ({ email, password }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const { user } = userCredential;
+            console.log(user)
             const newUser = {
-                 email: user.email,
-                 id: user.uid,
-                 token: user.stsTokenManager.accessToken
+                email: user.email,
+                id: user.uid,
+                token: user.stsTokenManager.accessToken,
+                displayName: user.displayName,
+                photoURL: user.photoURL
             }
             return newUser;  
        } catch (error) {
@@ -44,7 +57,7 @@ export const loginUser = createAsyncThunk(
        } 
     }
 
-) 
+);
 
 export const remove = createAsyncThunk(
     "auth/remove",
@@ -55,5 +68,6 @@ export const remove = createAsyncThunk(
         catch(error) {console.log(error)}
     }
 ) 
+
 
 
