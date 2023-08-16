@@ -1,10 +1,11 @@
 import { View, StyleSheet,Text,Image, TouchableOpacity, Dimensions } from "react-native"
 import { Ionicons } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, useState } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { remove } from "../redux/auth/operations";
-import { useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
+import { collection, doc, updateDoc } from "firebase/firestore"; 
+import { addLikes } from "../redux/posts/operation";
 
 
 export default ProfileScreen = () => {
@@ -14,24 +15,28 @@ export default ProfileScreen = () => {
     const login = useSelector((state) => state.auth.login);
     const photo = useSelector((state) => state.auth.photo);
     const idUser = useSelector((state) => state.auth.id);
-    const country = useSelector(state => state.posts.posts.country);
-    
-   
     const posts = useSelector(state => state.posts.posts);
-  console.log(idUser);    
+    const comments = useSelector(state => state.posts.comments);
     const filteredPosts = posts.filter((post) => { return post.idOwner === idUser });
-
-    console.log(posts);
+     
 
     const renderItem = ({item}) => 
          (  <View style={styles.postsContainer}>
              <Image source={{ uri: item.photo }} style={styles.containerPhoto} />
                      <Text >{item.photoName}</Text>
-                     <View style={styles.containerImageSubscribe}>
-            <TouchableOpacity onPress={() => {navigation.navigate("Comments", { photo: item.photo, idPost: item.idPost })
-            }}>                         
-                           <Ionicons name="chatbubble-outline" size={24} />
-                          </TouchableOpacity>
+        <View style={styles.containerImageSubscribe}>
+            <View style={styles.comments}>
+
+            <TouchableOpacity onPress={() => {navigation.navigate("Comments", { photo: item.photo, idPost: item.idPost }) }}>                         
+                <Ionicons name="chatbubble-outline" size={24} />
+            </TouchableOpacity >
+            <Text style={styles.textCounter}>{ comments.filter((comment) => {return comment.idPost === item.idPost }).length}</Text>
+            <TouchableOpacity>
+                    <Ionicons name="thumbs-up-outline" size={24} />
+            <Text>{  }</Text>    
+          </TouchableOpacity>
+            </View>
+           
                             <View style={styles.containerLocation}>
                             <TouchableOpacity>
                              <Ionicons name="location-outline" size={24} />
@@ -44,11 +49,13 @@ export default ProfileScreen = () => {
               </View >
             )
 
+    
     const handleLogout = () => {
         dispatch(remove());
         navigation.navigate("Login")
     }
 
+  
     return (
         <View style={styles.containerBG}>
             <Image source={require('../images/Photo.png')}
@@ -184,7 +191,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginTop: 5,
         justifyContent: "space-between",
-        alignItems:"center"
+        alignItems:"baseline"
     },
      containerLocation: {
         flexDirection:"row",
@@ -197,4 +204,15 @@ const styles = StyleSheet.create({
         // color: '#212121',
         textAlign: 'center',
     },
+     comments: {
+        display: "flex",
+        flexDirection:"row",
+        width: 80,
+        justifyContent: "space-around",
+        alignItems:"baseline"
+    },
+    textCounter: {
+        marginLeft: 5,
+        marginRight: 12
+    }
 })

@@ -2,6 +2,7 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvo
          Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Ionicons} from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Camera } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
@@ -11,7 +12,9 @@ import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore"; 
 // import { RNCamera } from 'react-native-camera';
 import { nanoid } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
+import { addDocRefId } from "../redux/posts/operation";
+
+
 
 export default function CreatePostScreen() {
     const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -23,7 +26,8 @@ export default function CreatePostScreen() {
     const [locationName, setLocationName] = useState(null);
     const [location, setLocation] = useState(null);
     const [country, setCountry] = useState(null);
-    const idOwner = useSelector(state=>state.auth.id)
+    const idOwner = useSelector(state => state.auth.id);
+    const dispatch = useDispatch()
 
     const firebaseConfig = {
       apiKey:"AIzaSyCiJv3C7j-CKatpBa817fMB-JSkMwaAJQw",
@@ -57,6 +61,7 @@ export default function CreatePostScreen() {
             const region = (address[0].region);
             const country = (address[0].country)
             const addressLocation = `${region},${country}`;
+            console.log(addressLocation);
             setLocationName(addressLocation);
             setCountry(country);
             setLocation(coords);
@@ -95,7 +100,7 @@ export default function CreatePostScreen() {
     
     const handleCreatePosts = async () => {
         if (data) {
-            await addDoc(collection(db, "posts"), {
+        const docRef = await addDoc(collection(db, "posts"), {
                 location: location,
                 photo: photo,
                 photoName: photoName,
@@ -103,9 +108,9 @@ export default function CreatePostScreen() {
                 idPost: nanoid(),
                 createdDate: new Date().getTime(),
                 idOwner: idOwner,
-                country: country
+                country: country,
+               
             });
-                        
             navigation.navigate("Post");
             
             setLocationName(null);
@@ -125,7 +130,7 @@ export default function CreatePostScreen() {
         setPhotoName(null);
     }
 
-   
+  
     return (
         <View style={styles.container}>
             
@@ -144,9 +149,6 @@ export default function CreatePostScreen() {
             
 
             <View style={styles.mainContent}>
-                {/* <RNCamera style={{ flex: 1 }}
-                          type={RNCamera.Constants.Type.back}
-                          captureAudio={false}/> */}
                 <Camera type={type} ref={setCameraRef} captureAudio={false} style={styles.cameraContainer}>
                     <View style={styles.photoView}>
                         {photo && (

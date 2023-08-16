@@ -1,11 +1,12 @@
-import { View, StyleSheet, Text, TouchableOpacity,Image } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity,Image, RefreshControl} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { remove } from "../redux/auth/operations";
-import { getAllPosts, getAllComments } from "../redux/posts/operation";
+import { getAllPosts } from "../redux/posts/operation";
 import { FlatList } from "react-native-gesture-handler";
+import { useCallback } from "react";
 
 
 export default function PostScreen() {
@@ -15,20 +16,31 @@ export default function PostScreen() {
     const login = useSelector(state => state.auth.login);
     const photoUser = useSelector(state => state.auth.photo);
     const posts = useSelector(state => state.posts.posts);  
- 
-    
+    const comments = useSelector(state => state.posts.comments);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+       
     useEffect(() => {
         dispatch(getAllPosts());
-    }, []);
+    }, [dispatch]); 
+
+    const handleRefresh = useCallback(() => {
+       setIsRefreshing(true);
+       dispatch(getAllPosts());
+       setIsRefreshing(false);
+    }, [dispatch]);
 
     const renderItem = ({item}) => 
          (  <View style={styles.postsContainer}>
              <Image source={{ uri: item.photo }} style={styles.containerPhoto} />
                      <Text >{item.photoName}</Text>
-                     <View style={styles.containerImageSubscribe}>
+        <View style={styles.containerImageSubscribe}>
+            <View style={styles.comments}>
+
             <TouchableOpacity onPress={() => {navigation.navigate("Comments", { photo: item.photo, idPost: item.idPost })}}>                         
                            <Ionicons name="chatbubble-outline" size={24} />
-                          </TouchableOpacity>
+            </TouchableOpacity>
+            <Text style={styles.textCounter}>{ comments.filter((comment) => {return comment.idPost === item.idPost }).length}</Text>
+            </View>
                             <View style={styles.containerLocation}>
                             <TouchableOpacity>
                              <Ionicons name="location-outline" size={24} />
@@ -70,7 +82,10 @@ return (
                 renderItem={renderItem}
                 keyExtractor={(item) => item.idPost}
                 contentContainerStyle={styles.postsContainer}
-                showsVerticalScrollIndicator={true}/>
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }/>
            
             </View> 
          
@@ -81,15 +96,13 @@ const styles = StyleSheet.create({
    
     container: {
         position: "absolute",
-        bottom: 0,
-        right: 0,
+        // bottom: 0,
+        // right: 0,
         width: "100%",
         height: '100%',
         alignItems: "center",
-        // justifyContent: "space-around",
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
-        // backgroundColor: "#FFFFFF",
         backgroundColor: 'blue',
         paddingLeft: 16,
         paddingRight:16
@@ -119,9 +132,6 @@ const styles = StyleSheet.create({
     },
     mainContent: {
         width: "100%",
-        // height: 200,
-        // justifyContent: 'center',
-        // alignItems:"center"
         textAlign:"center"
     },
     postsContainer: {
@@ -135,9 +145,7 @@ const styles = StyleSheet.create({
     },
     containerProfile: {
         flexDirection: "row",
-        marginTop: 20,
-        // marginLeft:20
-      
+        marginTop: 20,     
     },
     containerProfileText: {
         flexDirection: "column",
@@ -148,15 +156,12 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'Roboto-Medium',
         fontSize: 12,
-        // color: '#212121',
         textAlign: 'center',
     },
     containerPhoto: {
         position:"relative",
         width:360,
         height:245,
-        // backgroundColor: "orange",
-        // marginLeft:15,
         borderRadius:10,
         marginTop: 25,
         marginBottom:10
@@ -171,5 +176,13 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent: "flex-end",
         alignItems:"center",
+    },
+    comments: {
+        display: "flex",
+        flexDirection:"row",
+        width:60
+    },
+    textCounter: {
+        marginLeft: 5
     }
 })

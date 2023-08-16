@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { collection, getDocs } from 'firebase/firestore'; 
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore'; 
 import { db } from '../../config';
 
 export const getAllPosts = createAsyncThunk(
@@ -32,4 +32,7 @@ export const getAllComments = createAsyncThunk(
         }
     }
 )
+
+
+
     

@@ -2,9 +2,8 @@ import { View, StyleSheet, TextInput,Text,Image, TouchableOpacity, KeyboardAvoid
          Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
 import { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { loginUser, updateUser } from '../redux/auth/operations';
+import { loginUser } from '../redux/auth/operations';
 import { fetchSignInMethodsForEmail } from "firebase/auth";
 import { auth } from "../config";
 
@@ -40,6 +39,7 @@ export default LoginScreen = () => {
             navigation.navigate("Registration")
             return
         }
+        
         dispatch(loginUser({email, password}));
        
         setEmail('');
@@ -57,13 +57,7 @@ return (<View style={styles.containerBG}>
              behavior={Platform.OS == "ios" ? "padding" : "height"}
              keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
              style={styles.container}>   
-             
-           {/* <View style={styles.box}></View>
-           <TouchableOpacity style={styles.buttonPlus}>
-                <Ionicons name="add-circle-outline" size={30} color="orange" style={ styles.imagePlus}/>
-           </TouchableOpacity> */}
-
-           
+                       
             <Text style={styles.title}>Увійти</Text>
          
             <TextInput style={styles.input} 

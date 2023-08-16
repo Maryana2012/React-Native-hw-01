@@ -1,8 +1,8 @@
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, FlatList, KeyboardAvoidingView,Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, FlatList, RefreshControl,Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
-import { useEffect } from "react";
+import { useState } from "react";
+import { useEffect,useCallback } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore"; 
@@ -24,6 +24,7 @@ export default function CommentsScreen({ route }) {
     const currentDate = moment().format('DD MMMM, YYYY');
     const currentTime = moment().format('HH:mm');
     const createdDate = new Date().getTime();
+    const [isRefreshing, setIsRefreshing] = useState(false);
   
     const firebaseConfig = {
       apiKey:"AIzaSyCiJv3C7j-CKatpBa817fMB-JSkMwaAJQw",
@@ -42,8 +43,13 @@ export default function CommentsScreen({ route }) {
   
     useEffect(() => {
         dispatch(getAllComments());
-    }, []);
-
+    }, [dispatch]);
+ 
+    const handleRefresh = useCallback(() => {
+       setIsRefreshing(true);
+       dispatch(getAllComments());
+       setIsRefreshing(false);
+    }, [dispatch]);
     
    
      useEffect(() => {
@@ -65,7 +71,7 @@ export default function CommentsScreen({ route }) {
             photoOwner: photoOwner,
             idOwner: idUser,
             idPost: idPost,
-            currentDate: createdDate
+            currentDate: createdDate,
         });
         setComment("");
     }
@@ -101,15 +107,11 @@ export default function CommentsScreen({ route }) {
      }
     
     return (
-    //  <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
-    //     <KeyboardAvoidingView  
-            //  behavior={Platform.OS == "ios" ? "padding" : "height"}
-            //  keyboardVerticalOffset={Platform.OS == "ios" ? 0 : -100}
-            //  style={styles.container}>
+    
 <View style={styles.container}>
 
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => { navigation.navigate("Post") }}>
+              <TouchableOpacity onPress={() => { navigation.navigate("Home") }}>
                  <Ionicons name="arrow-back-outline" size={24} color="#000"/>
               </TouchableOpacity>
               <Text style={styles.title}>Коментарі</Text>
@@ -126,7 +128,11 @@ export default function CommentsScreen({ route }) {
                 photoOwner={item.photoOwner} comment={item.comment} creatingDate={item.creatingDate} creatingTime={ item.creatingTime} idOwner={item.idOwner} />)}
                 keyExtractor={(item) => item.idComment}
                 contentContainerStyle={styles.postsContainer}
-                showsVerticalScrollIndicator={true}/>    
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }
+                />    
                
              <TextInput style={styles.input}
                     placeholder="Коментувати..."
@@ -136,10 +142,6 @@ export default function CommentsScreen({ route }) {
                 <Ionicons name="arrow-up-outline" size={24} color="#000" onPress={handleCreateComment}/>
             </TouchableOpacity>
            </View>
-
-        //     {/* </KeyboardAvoidingView>
-        //  </TouchableWithoutFeedback>   */}
-       
     )
 }
 const styles = StyleSheet.create({
