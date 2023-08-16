@@ -1,13 +1,13 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   updateProfile,
-    signOut,
-currentUser
+  signOut,
+
 } from "firebase/auth";
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { auth } from "../../config";
+
 
 
 export const register = createAsyncThunk(
@@ -27,7 +27,7 @@ export const register = createAsyncThunk(
                   displayName: user.displayName,
                   photoURL: user.photoURL
             }
-            console.log(userNew)
+          
             return userNew;
         } catch (error) {
             console.log(error.message)
@@ -35,15 +35,12 @@ export const register = createAsyncThunk(
     }
 );
 
-
-
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
     async ({ email, password }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const { user } = userCredential;
-            console.log(user)
             const newUser = {
                 email: user.email,
                 id: user.uid,
@@ -68,6 +65,7 @@ export const remove = createAsyncThunk(
         catch(error) {console.log(error)}
     }
 ) 
+
 
 
 

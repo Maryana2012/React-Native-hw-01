@@ -10,7 +10,7 @@ import MapScreen from './Screens/MapScreen';
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
-import { store, persistor } from './redux/auth/store';
+import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import './config'
@@ -25,7 +25,7 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
-         <MainStack.Navigator initialRouteName='Profile' screenOptions={{ headerShown: false }}>
+         <MainStack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
            <MainStack.Screen name='Registration' component={RegistrationScreen}/>
            <MainStack.Screen name='Login' component={LoginScreen}/>
            <MainStack.Screen name='Home'component={Home}/>

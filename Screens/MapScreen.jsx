@@ -1,14 +1,17 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet} from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { PROVIDER_GOOGLE } from "react-native-maps"; 
+import { useSelector } from "react-redux";
 
 
-export default function MapScreen() {
-  const navigation = useNavigation();
-  const { params } = useRoute();
-  console.log(params);
+
+export default function MapScreen({route}) {
+//  const posts = useSelector(state => state.posts.posts);
+  console.log(route);
+  const { location } = route.params;
+//  const location = posts.some((post)=>{pos})
+ 
   return (
     <View style={styles.container}>
       <MapView
@@ -23,7 +26,7 @@ export default function MapScreen() {
           minZoomLevel={10}>
         <Marker
           title="I am here"
-          coordinate={{"latitude": params.location.latitude, "longitude": params.location.longitude}}
+          coordinate={{"latitude": location.latitude, "longitude": location.longitude}}
         />
       </MapView>
     </View>

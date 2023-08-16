@@ -161,9 +161,9 @@ const styles = StyleSheet.create({
         borderRadius:50,
     },
     userImg: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 16,
+        width: '100%',
+        height: '100%',
+        borderRadius: 16,
    },
     title: {
         fontFamily: 'Roboto-Medium',

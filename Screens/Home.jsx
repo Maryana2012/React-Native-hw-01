@@ -32,46 +32,34 @@ export default Home = () => {
             })}>
             <Tabs.Screen name="Post"
                 options={{ tabBarLabel: () => null }}
-                component = {PostScreen} />
+                component = {PostScreen}/>
             <Tabs.Screen name="CreatePost"
                 options={{ tabBarLabel: () => null }}
-                component={CreatePostScreen}
-            />
+                component={CreatePostScreen}/>
             <Tabs.Screen name="Profile"
                 options={{ tabBarLabel: () => null }}
-                component={ProfileScreen}
-            />  
+                component={ProfileScreen}/>  
         </Tabs.Navigator>   
     )
 }
 const styles = StyleSheet.create({
-      notActiveIcon: {
+        notActiveIcon: {
         color: 'orange',
-      },
-      activeIcon: {
-        color: 'blue',
     },
-      
+    activeIcon: {
+        color: 'blue',
+    }, 
     iconContainer: {
         display: "flex",
         flexDirection:"row",
-      justifyContent: "space-around",
-      alignItems: 'center',
-    //   height: 100
+        justifyContent: "space-around",
+        alignItems: 'center',
     },
     activeIconContainer: {
-      backgroundColor: '#FF6C00',
-      width: 70,
-      height: 40,
-      borderRadius: 50,
+        backgroundColor: '#FF6C00',
+        width: 70,
+        height: 40,
+        borderRadius: 50,
     },
-    // divEnd: {
-    //     width: 134,
-    //     height: 5,
-    //     backgroundColor: 'orange',
-        
-    //     marginBottom: 8,
-    // }
-   
 })
 

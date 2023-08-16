@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register,loginUser, remove, updateUser } from "./operations";
+import { register,loginUser, remove} from "./operations";
 
 
 const initialState= {
@@ -11,69 +11,38 @@ const initialState= {
     photo:null
 }
 
-// const handlePending = (state, action) => {
-//     console.log(state)
-//       console.log("pendding")  
-// }
+const handleRegisterFulfilled = (state, action) => {
+    state.email = action.payload.email;
+    state.token = action.payload.token;
+    state.id = action.payload.id;
+    state.login = action.payload.displayName;
+    state.photo = action.payload.photoURL
+}
 
-// const handleFulfilled = (state, action) => {
-//      console.log(state)
-//     console.log("fulfilled")
-// }
+const handleLoginUserFulfilled = (state, action) => {
+    state.email = action.payload.email;
+    state.token = action.payload.token;
+    state.id = action.payload.id;
+    state.login = action.payload.displayName,
+    state.photo = action.payload.photoURL    
+}
 
-// const handleRejected = (state, action) => {
-//      console.log(state)
-//     console.log("error")
-// }
+const handleRemove = (state, action) => {
+    state.email = null;
+    state.token = null;
+    state.id = null;    
+}
 
 export const authSlice = createSlice({
     name: "user",
-    initialState: initialState,
-    extraReducers: {
-        [register.fulfilled](state, action) {
-            state.email = action.payload.email;
-            state.token = action.payload.token;
-            state.id = action.payload.id;
-            state.login = action.payload.displayName;
-            state.photo = action.payload.photoURL
-          
-           },
-        [loginUser.fulfilled](state, action) {
-            state.email = action.payload.email;
-            state.token = action.payload.token;
-            state.id = action.payload.id;
-            state.login = action.payload.displayName,
-            state.photo = action.payload.photoURL    
-        },
-        [loginUser.error](state, action) {
-            console.log(error)
-        },
-        [remove.fulfilled](state) {
-            state.email = null;
-            state.token = null;
-            state.id = null;           
-        },
-        // [updateUser.fulfilled](state, action) {
-        //     state.login = action.payload;
-            // console.log(action.payload)
-            // console.log("slice ok")
-                     
-        // }
+    initialState: initialState,     
+    extraReducers: (builder) => {
+        builder
+        .addCase(register.fulfilled, handleRegisterFulfilled)
+        .addCase(loginUser.fulfilled, handleLoginUserFulfilled)
+        .addCase(remove.fulfilled, handleRemove)
+     
     }
-//     extraReducers: (builder) => {
-//         builder
-//         // .addCase(register.pending, handlePending)
-//         .addCase(register.fulfilled, handleFulfilled)
-//         .addCase(register.rejected, handleRejected)
-//         // .addCase(login.pending, handlePending)
-//         .addCase(loginUser.fulfilled, handleFulfilled)
-//         .addCase(loginUser.rejected, handleRejected)
-//         // .addCase(remove.fulfilled, handleFulfilled)
-//         .addCase(remove.fulfilled, handleFulfilled)
-//         .addCase(remove.rejected, handleRejected)
-// }
-    
-
 });
 
 export const authReducer = authSlice.reducer;

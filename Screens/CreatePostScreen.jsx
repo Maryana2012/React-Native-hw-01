@@ -6,6 +6,12 @@ import { Camera } from "expo-camera";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import * as MediaLibrary from "expo-media-library";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore"; 
+// import { RNCamera } from 'react-native-camera';
+import { nanoid } from "@reduxjs/toolkit";
+import { useSelector } from "react-redux";
 
 export default function CreatePostScreen() {
     const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -16,23 +22,44 @@ export default function CreatePostScreen() {
     const [photoName, setPhotoName] = useState(null);
     const [locationName, setLocationName] = useState(null);
     const [location, setLocation] = useState(null);
+    const [country, setCountry] = useState(null);
+    const idOwner = useSelector(state=>state.auth.id)
+
+    const firebaseConfig = {
+      apiKey:"AIzaSyCiJv3C7j-CKatpBa817fMB-JSkMwaAJQw",
+      authDomain:"my-app-react-native-c6114.firebaseapp.com",
+      projectId: "my-app-react-native-c6114",
+      storageBucket: "my-app-react-native-c6114.appspot.com",
+      messagingSenderId: "935547738830",
+      appId: "1:935547738830:web:949dd36609b66ec1e70e9f",
+      measurementId: "G-HWERD5KYRC"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const navigation = useNavigation();
     const data = photo && photoName && locationName;
-  
+   
+    
     useEffect(() => {
         (async () => {
          const { status } = await Location.requestForegroundPermissionsAsync();
          if (status !== "granted") {
             console.log("Permission to access location was denied");
          }
-      
-         const location = await Location.getCurrentPositionAsync({});
-         const coords = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-         };
-         setLocation(coords);
+        const location = await Location.getCurrentPositionAsync({});
+        const coords = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            };
+        const address = await Location.reverseGeocodeAsync({ latitude:coords.latitude, longitude: coords.longitude });
+            const region = (address[0].region);
+            const country = (address[0].country)
+            const addressLocation = `${region},${country}`;
+            setLocationName(addressLocation);
+            setCountry(country);
+            setLocation(coords);
         })();
     }, []);
 
@@ -41,21 +68,9 @@ export default function CreatePostScreen() {
             const { status } = await Camera.requestCameraPermissionsAsync();
             await MediaLibrary.requestPermissionsAsync();
             setHasPermission(status === 'granted');
-             
-            // return () => {
-            //     navigator.mediaDevices.getUserMedia({ video: true })
-            //         .then((stream) => {
-            //             const tracks = stream.getTracks();
-            //             tracks.forEach((track) => { track.stop(); });
-            //         })
-            //         .catch((error) => { console.log('Помилка при вимкненні камери:', error); })
-            // }
-        }
-        )();
+        })();
     }, []);
     
-
-
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => { setKeyboardOpen(true) })
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => { setKeyboardOpen(false); });
@@ -64,41 +79,11 @@ export default function CreatePostScreen() {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
-    }, []);
-
-//    
-
-//     const enableCamera = async () => {
-//       try {
-//         mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-//         const videoElement = document.getElementById('video');
-//         videoElement.srcObject = mediaStream;
-//         videoElement.play();
-//       } catch (error) {
-//         console.error('Error accessing camera:', error);
-//       }
-//     };
-
-//     const disableCamera = () => {
-//       if (mediaStream) {
-//         const videoTracks = mediaStream.getVideoTracks();
-//         videoTracks.forEach(track => track.stop());
-//         mediaStream = null;
-//       }
-//     };
-
-//     enableCamera();
-
-//     return () => {
-//       disableCamera();
-//     };
-//   }, []);
-
-
-     
+    }, []); 
     
     if (hasPermission === null) {return <View /> }
     if (hasPermission === false) { return <Text>No access to camera</Text> }
+
 
     const handleMakePhoto = async ()=>{
         if (cameraRef) {
@@ -108,18 +93,26 @@ export default function CreatePostScreen() {
         } 
     }
     
-    const handleCreatePublish = () => {
+    const handleCreatePosts = async () => {
         if (data) {
-            navigation.navigate("Post",
-               {location: location,
+            await addDoc(collection(db, "posts"), {
+                location: location,
                 photo: photo,
                 photoName: photoName,
-                locationName: locationName
-                });
+                locationName: locationName,
+                idPost: nanoid(),
+                createdDate: new Date().getTime(),
+                idOwner: idOwner,
+                country: country
+            });
+                        
+            navigation.navigate("Post");
             
             setLocationName(null);
             setPhotoName(null);
             setPhoto(null);
+            
+             
         } else {
             console.log("Please, fill all fields");
             return;
@@ -131,7 +124,8 @@ export default function CreatePostScreen() {
         setPhoto(null);
         setPhotoName(null);
     }
-    
+
+   
     return (
         <View style={styles.container}>
             
@@ -150,6 +144,9 @@ export default function CreatePostScreen() {
             
 
             <View style={styles.mainContent}>
+                {/* <RNCamera style={{ flex: 1 }}
+                          type={RNCamera.Constants.Type.back}
+                          captureAudio={false}/> */}
                 <Camera type={type} ref={setCameraRef} captureAudio={false} style={styles.cameraContainer}>
                     <View style={styles.photoView}>
                         {photo && (
@@ -178,14 +175,15 @@ export default function CreatePostScreen() {
                 <TextInput placeholder="Місцевість..."
                     style={styles.inputLocation}
                     value={locationName}
-                    onChangeText={(text) => setLocationName(text)} />
+                            onChangeText={(locationName) => setLocationName(locationName)}
+                        />
                 
                 {!keyboardOpen && (<>           
                 <TouchableOpacity style={[styles.button, !data && styles.buttonDisabled]}
-                    onPress={handleCreatePublish}>
+                    onPress={handleCreatePosts}>
                     <Text style={styles.buttonText}>Опублікувати</Text>
                 </TouchableOpacity>
-                        </>)}
+                </>)}
             </View>     
 
             {!keyboardOpen && (<>
@@ -238,7 +236,7 @@ const styles = StyleSheet.create({
     mainContent: {
         flex: 1,
         width: "100%",
-        height:550,  
+        // height:550,  
     },
    
     photoButton:{
