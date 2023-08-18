@@ -22,14 +22,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-       "config":{
-           "googleMaps": {
-           "apiKey": "AIzaSyC3c-QQBNoNJycRqrmYT5KhuSho2j411kc"
-      }
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC3c-QQBNoNJycRqrmYT5KhuSho2j411kc"
         }
+      },
+      "package": "com.maryana.AwesomeProject"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "374a91e5-9395-4bc4-b1d3-b2bfe57d048f"
+      }
     }
   }
 }
